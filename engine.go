@@ -56,7 +56,7 @@ func (g *Engine) Layout(outsideWidth, outsideHeight int) (int, int) {
 	return g.Context.ScreenWidth, g.Context.ScreenHeight
 }
 
-func Initialize(context *Context, scene Scene) {
+func NewEngine(context *Context, scene Scene) *Engine {
 	ebiten.SetWindowSize(context.WindowWidth, context.WindowHeight)
 	ebiten.SetWindowTitle(context.Title)
 
@@ -66,6 +66,8 @@ func Initialize(context *Context, scene Scene) {
 		engine.NextScene = scene
 		scene.Begin(engine)
 	}
+
+	return engine
 }
 
 func (g *Engine) Run() error {
