@@ -33,13 +33,12 @@ type Context struct {
 
 type Engine struct {
 	Context      *Context
-	PreviousTime time.Time
+	ClearColor color.Color
 	Delta        float64
 
-	Scene     Scene
-	NextScene Scene
-
-	ClearColor color.Color
+	previousTime time.Time
+	scene     Scene
+	nextScene Scene
 }
 
 type Renderer interface {
