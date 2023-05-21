@@ -17,7 +17,7 @@ func (g *Engine) Update() error {
 	} else {
 		now := time.Now()
 		delta = now.Sub(g.previousTime).Seconds()
-		g.PreviousTime = now
+		g.previousTime = now
 	}
 	g.Delta = delta
 
@@ -63,8 +63,9 @@ func NewEngine(context *Context, scene Scene) *Engine {
 	engine := &Engine{Context: context, previousTime: time.Now()}
 
 	if scene != nil {
-		engine.NextScene = scene
+		engine.nextScene = scene
 		scene.Begin(engine)
+		engine.scene = scene
 	}
 
 	return engine
