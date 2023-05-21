@@ -16,14 +16,14 @@ func (g *Engine) Update() error {
 		delta = 1.0 / 60.0
 	} else {
 		now := time.Now()
-		delta = now.Sub(g.PreviousTime).Seconds()
+		delta = now.Sub(g.previousTime).Seconds()
 		g.PreviousTime = now
 	}
 	g.Delta = delta
 
-	g.Scene.BeforeUpdate()
-	g.Scene.Update()
-	g.Scene.AfterUpdate()
+	g.scene.BeforeUpdate()
+	g.scene.Update()
+	g.scene.AfterUpdate()
 
 	return nil
 }
@@ -31,15 +31,15 @@ func (g *Engine) Update() error {
 func (g *Engine) Draw(screen *ebiten.Image) {
 	screen.Clear()
 
-	if g.Scene != nil {
-		g.Scene.BeforeRender(screen)
+	if g.scene != nil {
+		g.scene.BeforeRender(screen)
 	}
 
 	screen.Fill(g.ClearColor)
 
-	if g.Scene != nil {
-		g.Scene.Render(screen)
-		g.Scene.AfterRender(screen)
+	if g.scene != nil {
+		g.scene.Render(screen)
+		g.scene.AfterRender(screen)
 	}
 }
 
@@ -60,7 +60,7 @@ func NewEngine(context *Context, scene Scene) *Engine {
 	ebiten.SetWindowSize(context.WindowWidth, context.WindowHeight)
 	ebiten.SetWindowTitle(context.Title)
 
-	engine := &Engine{Context: context, PreviousTime: time.Now()}
+	engine := &Engine{Context: context, previousTime: time.Now()}
 
 	if scene != nil {
 		engine.NextScene = scene
