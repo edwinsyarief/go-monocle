@@ -21,6 +21,9 @@ jobs:
       with:
         go-version: 1.20
 
+    - name: Get Dependency
+      run: go get .
+
     - name: Build
       run: go build -v ./...
 
