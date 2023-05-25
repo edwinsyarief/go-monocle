@@ -1,6 +1,7 @@
 package monocle
 
 import (
+	"image/color"
 	"log"
 	"time"
 
@@ -8,6 +9,42 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 )
+
+type PlatformType int
+
+const (
+	PC PlatformType = iota
+	XBOX
+	PS4
+	PS5
+	NSWITCH
+)
+
+type Context struct {
+	Title                string
+	Version              string
+	Platform             PlatformType
+	IsDebug              bool
+	ExitOnEscapeKeypress bool
+	IsFixedUpdate        bool
+
+	WindowWidth       int
+	WindowHeight      int
+	ScreenWidth       int
+	ScreenHeight      int
+	FullScreen        bool
+	AllowWindowResize bool
+}
+
+type Engine struct {
+	Context    *Context
+	ClearColor color.Color
+	Delta      float64
+
+	previousTime time.Time
+	scene        Scene
+	nextScene    Scene
+}
 
 func (g *Engine) Update() error {
 
@@ -44,21 +81,36 @@ func (g *Engine) Draw(screen *ebiten.Image) {
 }
 
 func (g *Engine) Layout(outsideWidth, outsideHeight int) (int, int) {
-	switch g.Context.Platform {
-	case PS4:
-	case PS5:
-	case XBOX:
-		return 1920, 1280
-	case NSWITCH:
-		return 1280, 720
-	}
-
 	return g.Context.ScreenWidth, g.Context.ScreenHeight
 }
 
 func NewEngine(context *Context, scene Scene) *Engine {
-	ebiten.SetWindowSize(context.WindowWidth, context.WindowHeight)
 	ebiten.SetWindowTitle(context.Title)
+
+	switch context.Platform {
+	case PS4:
+	case PS5:
+	case XBOX:
+		ebiten.SetWindowSize(1920, 1080)
+	case NSWITCH:
+		ebiten.SetWindowSize(1280, 720)
+	default:
+		ebiten.SetWindowSize(context.WindowWidth, context.WindowHeight)
+	}
+
+	if context.AllowWindowResize {
+		ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
+	}
+
+	switch context.Platform {
+	case XBOX:
+	case PS4:
+	case PS5:
+	case NSWITCH:
+		ebiten.SetFullscreen(true)
+	default:
+		ebiten.SetFullscreen(context.FullScreen)
+	}
 
 	engine := &Engine{Context: context, previousTime: time.Now()}
 
